@@ -1,8 +1,12 @@
 import React, {useRef, useState } from 'react';
 import {Form} from '@unform/web';
+import * as Yup from 'yup';
 import { SubmitHandler, FormHandles } from '@unform/core';
 import Select from './components/Select';
 import {banks} from './services/banks';
+
+import {Container} from './appStyles';
+import getValidationErros from './uitils/getValidationsErros';
 
 interface FormData {
   bank: string;
@@ -11,8 +15,19 @@ interface FormData {
 function App() {
   const [, setInputValue] = useState('');
   const formRef = useRef<FormHandles>(null);
-  const handleSubmit: SubmitHandler<FormData> = data => {
-    console.log(data);
+  const handleSubmit: SubmitHandler<FormData> = async data => {
+    formRef.current?.setErrors({});
+    try {
+      const schema = Yup.object().shape({
+        banks: Yup.string().required(),
+      });
+      await schema.validate(data, {
+        abortEarly: false,
+      })
+    } catch (err) {
+      const erros = getValidationErros(err);
+      formRef.current?.setErrors(erros);
+    } 
   };
   
   const opionsBanks = banks.map(bank => ({
@@ -36,7 +51,7 @@ function App() {
     }, 1000);
   };
   return (
-    <div>
+    <Container>
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Select 
           name="banks" 
@@ -47,7 +62,7 @@ function App() {
         <button type="submit">cadastrar</button>
       </Form>
       
-    </div>
+    </Container>
   );
 }
 

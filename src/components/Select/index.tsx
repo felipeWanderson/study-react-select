@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { OptionTypeBase } from 'react-select'; 
 import Select, { Props as AsyncProps } from 'react-select/async';
 import { useField } from '@unform/core';
@@ -10,8 +10,10 @@ interface Props extends AsyncProps<OptionTypeBase, false> {
 
 const AsyncSelect: React.FC<Props> = ({ name, ...rest }) => {
   const selectRef = useRef(null);
+  const [isFocused, setIsFocused] = useState(false);
   const { fieldName, defaultValue, registerField, error } = useField(name);
 
+  
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -35,14 +37,23 @@ const AsyncSelect: React.FC<Props> = ({ name, ...rest }) => {
     });
   }, [fieldName, registerField, rest.isMulti]);
 
+  const handleInputFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
+  const handleInputBlur = useCallback(() => {
+    setIsFocused(false);
+  }, []);
   
   return (
-    <Container>
+    <Container isErrored={!!error} isFocused={isFocused}>
       <Select
         cacheOptions
         defaultValue={defaultValue}
         ref={selectRef}
         classNamePrefix="select"
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+       openMenuOnClick={false}
       
         {...rest}
       />
