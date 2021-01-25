@@ -24,6 +24,7 @@ function App() {
       await schema.validate(data, {
         abortEarly: false,
       })
+      console.log(data);
     } catch (err) {
       const erros = getValidationErros(err);
       formRef.current?.setErrors(erros);
@@ -58,6 +59,7 @@ function App() {
           loadOptions={loadOptions} 
           onInputChange={handleInputChange}
           placeholder="Digite o código ou o nome do banco"
+          options={opionsBanks}
           />
         <button type="submit">cadastrar</button>
       </Form>

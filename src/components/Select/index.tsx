@@ -43,6 +43,29 @@ const AsyncSelect: React.FC<Props> = ({ name, ...rest }) => {
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);
   }, []);
+
+  const msgStyles = {
+    color: 'white',
+  };
+
+  const LoadingMessage = (props: any) => {
+    return (   
+        <div
+          style={props.getStyles('loadingMessage', props)}
+        >
+          <span>Carregando....</span>
+        </div>
+      
+    );
+  };
+
+  const NoOptionsMessage = () => {
+    return (
+      <div>
+        <span>sem opções</span>
+      </div>
+    );
+  };
   
   return (
     <Container isErrored={!!error} isFocused={isFocused}>
@@ -53,8 +76,15 @@ const AsyncSelect: React.FC<Props> = ({ name, ...rest }) => {
         classNamePrefix="select"
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
-       openMenuOnClick={false}
-      
+        openMenuOnClick={false}
+        styles={{
+          loadingMessage: base => ({
+            ...base,
+            color: 'black',
+          }),
+          noOptionsMessage: base => ({ ...base, ...msgStyles }),
+        }}
+        components={{ LoadingMessage, NoOptionsMessage }}
         {...rest}
       />
       {error && <span>{error}</span>}
